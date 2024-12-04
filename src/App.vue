@@ -1,12 +1,14 @@
 <template>
 
 	<main>
-		<RebateTable />
+		<!-- <RebateTable /> -->
+		<RebateTableCopy />
 	</main>
 </template>
 
 <script setup>
-import RebateTable from './RebateTable.vue'
+import RebateTable from './RebateTable.vue';
+import RebateTableCopy from './RebateTable copy.vue';
 
 </script>
 

@@ -110,7 +110,7 @@ tbody tr {
 	background-color: #0844fc;
 	transform: perspective(500px);
 	transform-origin: top;
-	transform-origin: center;
+	/* transform-origin: center; */
 	/* Pivot point at the center */
 	/* animation: flip 1.5s ease-in-out, rotateOut 1.5s ease-in-out 1.5s; */
 }
