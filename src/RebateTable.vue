@@ -25,7 +25,7 @@
 			<div class="Table_Body_Wrapper w-100 d-flex flex-column align-items-center">
 				<!-- Loop through rows -->
 				<div class="row Table_Body" v-for="(entry, index) in visibleData" :key="`${entry.uid}-${index}`"
-					:style="{ transform: `translateY(${index > 0 ? tableOffset : 0}px)`, transition: 'transform 1s linear' }"
+					:style="{ transform: `translateY(${index > 0 ? tableOffset : 0}px)`, transition: 'transform 1s ease-in-out' }"
 					:class="{ 'fade-out': index === 0 }">
 
 					<div class="col-4 Table_Content_Box d-flex justify-content-center align-items-center">
@@ -162,7 +162,7 @@ export default {
 /* Fade-out animation for the first row */
 .fade-out {
 	transform-origin: top;
-	animation: flip 1.5s linear;
+	animation: flip 1.5s ease-in-out;
 }
 
 @keyframes flip {
