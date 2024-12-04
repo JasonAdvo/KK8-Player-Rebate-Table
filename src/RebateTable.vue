@@ -1,6 +1,6 @@
 <template>
-	<div class="w-100 mx-auto d-flex flex-column justify-content-center align-items-center" style="max-width: 1200px;">
-		<div class="row Table">
+	<div class="w-100 mx-auto d-flex flex-column justify-content-center align-items-center">
+		<div class=" row Table">
 			<div class="col-4 Table_Header d-flex justify-content-center align-items-center"
 				style="border-right: 1px solid #0047FF;">
 				<div class="fw-bold text-uppercase text-center py-2">
