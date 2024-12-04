@@ -120,7 +120,7 @@ tbody tr:first-child {
 }
 
 /* Flip (Rotate Toward You) Animation */
-/* @keyframes flip {
+@keyframes flip {
 	0% {
 		transform: perspective(500px) rotateX(-90deg) scaleY(1.1);
 	}
@@ -128,10 +128,10 @@ tbody tr:first-child {
 	100% {
 		transform: perspective(500px) rotateX(0deg) scaleY(1);
 	}
-} */
+}
 
 /* Rotate Out Animation */
-/* @keyframes rotateOut {
+@keyframes rotateOut {
 	0% {
 		transform: perspective(500px) rotateX(0deg) scaleY(1);
 	}
@@ -139,10 +139,10 @@ tbody tr:first-child {
 	100% {
 		transform: perspective(500px) rotateX(90deg) scaleY(1.1);
 	}
-} */
+}
 
 /* Flip (Rotate Toward You) Animation */
-@keyframes flip {
+/* @keyframes flip {
 	0% {
 		transform: rotateX(-90deg);
 	}
@@ -150,10 +150,10 @@ tbody tr:first-child {
 	100% {
 		transform: rotateX(0deg);
 	}
-}
+} */
 
 /* Rotate Out Animation */
-@keyframes rotateOut {
+/* @keyframes rotateOut {
 	0% {
 		transform: rotateX(0deg);
 	}
@@ -161,7 +161,7 @@ tbody tr:first-child {
 	100% {
 		transform: rotateX(90deg);
 	}
-}
+} */
 
 tbody tr:last-child {
 	border-bottom: 2px solid #0047FF;
