@@ -1,22 +1,51 @@
 <template>
-	<div>
-		<table class="w-100 text-center" :key="tableKey">
-			<thead>
-				<tr>
-					<td>UID</td>
-					<td>Turnover</td>
-					<td>Rebate Amount (RM)</td>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="(entry, index) in formattedData.slice(visibleIndex, visibleIndex + 5)"
-					:key="entry.maskedUID">
-					<td>{{ entry.maskedUID }}</td>
-					<td>{{ entry.turnover }}</td>
-					<td>{{ entry.amount }}</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="w-100 mx-auto d-flex flex-column justify-content-center align-items-center" style="max-width: 1200px;">
+		<div class="row Table">
+			<div class="col-4 Table_Header d-flex justify-content-center align-items-center"
+				style="border-right: 1px solid #0047FF;">
+				<div class="fw-bold text-uppercase text-center py-2">
+					uid
+				</div>
+			</div>
+			<div class="col-4 Table_Header d-flex justify-content-center align-items-center"
+				style="border-right: 1px solid #0047FF;">
+				<div class="fw-bold text-uppercase text-center py-2">
+					turnover
+				</div>
+			</div>
+			<div class="col-4 Table_Header d-flex justify-content-center align-items-center">
+				<div class="fw-bold text-uppercase text-center py-2">
+					rebate amount (rm)
+				</div>
+			</div>
+		</div>
+
+		<div class="Table_Body_Container w-100 overflow-hidden"
+			style="border: 1px solid #0047FF; max-height: 205px; position: relative;">
+			<div class="Table_Body_Wrapper w-100 d-flex flex-column align-items-center">
+				<!-- Loop through rows -->
+				<div class="row Table_Body" v-for="(entry, index) in visibleData" :key="`${entry.uid}-${index}`"
+					:style="{ transform: `translateY(${index > 0 ? tableOffset : 0}px)`, transition: 'transform 1s linear' }"
+					:class="{ 'fade-out': index === 0 }">
+
+					<div class="col-4 Table_Content_Box d-flex justify-content-center align-items-center">
+						<div class="fw-bold text-uppercase text-center py-2">
+							{{ entry.maskedUID }}
+						</div>
+					</div>
+					<div class="col-4 Table_Content_Box d-flex justify-content-center align-items-center">
+						<div class="fw-bold text-uppercase text-center py-2">
+							{{ entry.turnover }}
+						</div>
+					</div>
+					<div class="col-4 Table_Content_Box d-flex justify-content-center align-items-center">
+						<div class="fw-bold text-uppercase text-center py-2">
+							{{ entry.amount }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -27,143 +56,122 @@ export default {
 	data() {
 		return {
 			playerDetail: playerDetail,
-			visibleIndex: 0, // Start from the latest data (the first in reversed data)
-			interval: null, // For controlling the automatic update
-			tableKey: 0, // A unique key to force table re-render
+			visibleData: [], // To store all the player data
+			tableOffset: 0, // Offset to move rows upwards
+			rowHeight: 41, // Height of one row in pixels
 		};
 	},
 	computed: {
+		// Prepare all data with masked UIDs
 		formattedData() {
 			return this.playerDetail.map(item => ({
 				...item,
 				maskedUID: item.uid ? this.applyMask(item.uid) : "Invalid UID",
-				flip: false, // Add flip property for animation trigger
-			}))
+			}));
 		},
 	},
 	methods: {
+		// Apply masking to the UID
 		applyMask(uid) {
 			uid = uid.toString();
 			if (uid.length < 2) return uid;
-
 			const firstChar = uid.charAt(0).toUpperCase();
 			const lastChar = uid.charAt(uid.length - 1);
 			const maskedMiddle = '*'.repeat(uid.length - 2);
 			return `${firstChar}${maskedMiddle}${lastChar}`;
 		},
-		updateData() {
-			// Always update the visibleIndex to show the latest data at the top
-			if (this.visibleIndex + 5 >= this.formattedData.length) {
-				this.visibleIndex = 0; // Reset to the beginning if at the end
-			} else {
-				this.visibleIndex += 1; // Shift to show the next set of data
-			}
 
-			// After updating the visibleIndex, trigger a re-render for the table with a new key.
-			this.tableKey++;
+		// Remove the first row and shift others
+		removeRow() {
+			if (this.visibleData.length) {
+				// Move up the table and rotate first row to the end
+				this.tableOffset -= this.rowHeight;
+
+				// After 1 second, rotate the first row to the end
+				setTimeout(() => {
+					const firstRow = this.visibleData.shift();
+					this.visibleData.push(firstRow); // Append the first row to the end
+					this.tableOffset = 0; // Reset the offset to initial state
+				}, 1000); // Match the animation duration
+			}
 		}
 	},
 	mounted() {
-		// Set interval to automatically update the data every 2 seconds
-		this.interval = setInterval(this.updateData, 3000);
-	},
-	beforeDestroy() {
-		// Clear the interval when the component is destroyed to prevent memory leaks
-		clearInterval(this.interval);
+		// Initialize the visible data
+		this.visibleData = [...this.formattedData];
+
+		// Trigger the first animation immediately
+		this.removeRow();
+
+		// Continue the animation loop
+		setInterval(() => {
+			this.removeRow();
+		}, 1500); // Execute every 1.5 seconds
 	},
 };
 </script>
 
 <style scoped>
-table {
+.Table {
 	border: 1px solid #0047FF;
 	border-collapse: collapse;
 	width: 100%;
-	transform-style: preserve-3d;
-	transition: transform 0.5s ease-in-out;
 }
 
-table td {
-	width: calc(100% / 3);
-	padding: 8px;
+.Table_Body_Container {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	overflow: hidden;
+	position: relative;
 }
 
-thead td {
+.Table_Body_Container::-webkit-scrollbar {
+	display: none;
+}
+
+.Table_Body {
+	width: 100%;
+	border-collapse: collapse;
+	border-bottom: 0.5px solid white;
+}
+
+.Table_Body:last-child {
+	border-bottom: unset;
+}
+
+.Table_Header {
 	color: #0047FF;
-	border-bottom: 1px solid #0047FF;
-	border-left: 1px solid #0047FF;
 	background-color: #FFF;
-	font-weight: 700;
-	text-transform: uppercase;
 }
 
-tbody td {
-	color: white;
-	border-left: 1px solid #FFF;
+.Table_Content_Box {
+	color: #FFF;
 	background-color: #0047FF;
+	border-right: 0.5px solid white;
+	font-weight: 700;
 }
 
-tbody tr {
-	color: white;
-	border-bottom: 1px solid white;
-	border-left: 1px solid #FFF;
-	background-color: #0844fc;
-	transform: perspective(500px);
+.Table_Content_Box:last-child {
+	border-right: unset;
+}
+
+.Table_Body_Wrapper {
+	position: relative;
+}
+
+/* Fade-out animation for the first row */
+.fade-out {
 	transform-origin: top;
-	/* transform-origin: center; */
-	/* Pivot point at the center */
-	/* animation: flip 1.5s ease-in-out, rotateOut 1.5s ease-in-out 1.5s; */
+	animation: flip 1.5s linear;
 }
 
-tbody tr:first-child {
-	animation: flip 1.5s ease-in-out, rotateOut 1.5s ease-in-out 1.5s;
-}
-
-/* Flip (Rotate Toward You) Animation */
 @keyframes flip {
-	0% {
-		transform: perspective(500px) rotateX(-90deg) scaleY(1.1);
-	}
-
-	100% {
-		transform: perspective(500px) rotateX(0deg) scaleY(1);
-	}
-}
-
-/* Rotate Out Animation */
-@keyframes rotateOut {
-	0% {
-		transform: perspective(500px) rotateX(0deg) scaleY(1);
-	}
-
-	100% {
-		transform: perspective(500px) rotateX(90deg) scaleY(1.1);
-	}
-}
-
-/* Flip (Rotate Toward You) Animation */
-/* @keyframes flip {
-	0% {
-		transform: rotateX(-90deg);
-	}
-
-	100% {
-		transform: rotateX(0deg);
-	}
-} */
-
-/* Rotate Out Animation */
-/* @keyframes rotateOut {
-	0% {
+	25% {
 		transform: rotateX(0deg);
 	}
 
 	100% {
 		transform: rotateX(90deg);
 	}
-} */
-
-tbody tr:last-child {
-	border-bottom: 2px solid #0047FF;
 }
 </style>
