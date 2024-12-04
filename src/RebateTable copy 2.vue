@@ -83,11 +83,11 @@ export default {
 
 		// Remove the first row and shift others
 		removeRow() {
-
 			if (this.visibleData.length) {
 				// Move up the table and rotate first row to the end
 				this.tableOffset -= this.rowHeight;
 
+				// After 1 second, rotate the first row to the end
 				setTimeout(() => {
 					const firstRow = this.visibleData.shift();
 					this.visibleData.push(firstRow); // Append the first row to the end
@@ -100,10 +100,13 @@ export default {
 		// Initialize the visible data
 		this.visibleData = [...this.formattedData];
 
-		// Start the animation loop
+		// Trigger the first animation immediately
+		this.removeRow();
+
+		// Continue the animation loop
 		setInterval(() => {
 			this.removeRow();
-		}, 1500); // Execute every 2 seconds
+		}, 1500); // Execute every 1.5 seconds
 	},
 };
 </script>
